@@ -8,13 +8,15 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  name     String
-  email    String  @unique
-  password String
+  id        String  @id @default(uuid())
+  name      String
+  email     String  @unique
+  password  String
   createdAt DateTime @default(now())
 
-  cart     Cart?   @relation("UserCart") // Обратная связь с корзиной (1 к 1)
+  role      String  @default("user") // Добавляем поле роли
+
+  cart      Cart?   @relation("UserCart")
 }
 
 model Product {
