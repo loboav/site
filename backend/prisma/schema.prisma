@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  email    String  @unique
+  password String
+  createdAt DateTime @default(now())
+
+  cart     Cart?   @relation("UserCart") // Обратная связь с корзиной (1 к 1)
+}
+
+model Product {
+  id       String   @id @default(uuid())
+  name     String
+  price    Float
+  stock    Int
+  category String  @default("Мёд")
+  createdAt DateTime @default(now())
+
+  cartItems CartItem[] // Обратная связь с `CartItem`
+}
+
+model Cart {
+  id     String  @id @default(uuid())
+  user   User    @relation("UserCart", fields: [userId], references: [id]) // Оставляем связь здесь
+  userId String  @unique
+  items  CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  cartId    String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int
+}
