@@ -48,8 +48,8 @@ export default function Footer() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg text-black">
             <h2 className="text-xl font-bold mb-4">Контактная информация</h2>
-            <p>Email: info@honeyshop.com</p>
-            <p>Телефон: +375 29 123-45-67</p>
+            <p>Email: lobovp@yandex.ru</p>
+            <p>Телефон: +375 29 686-09-61</p>7
             <button 
               className="mt-4 text-red-500" 
               onClick={() => setShowContactModal(false)}

@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterDto, LoginDto } from './auth.dto';
 import * as bcrypt from 'bcrypt';
@@ -8,13 +8,23 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
 
-  async register(dto: RegisterDto) {
+  async register(dto: RegisterDto, currentUser?: any) {
     const userExists = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
 
     if (userExists) {
       throw new BadRequestException('User already exists');
+    }
+
+    // Устанавливаем роль
+    let role = dto.role || 'user';
+
+    if (role === 'admin') {
+      // Только администраторы могут регистрировать администраторов
+      if (!currentUser || currentUser.role !== 'admin') {
+        throw new ForbiddenException('Only admins can create admins');
+      }
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -24,6 +34,7 @@ export class AuthService {
         name: dto.name,
         email: dto.email,
         password: hashedPassword,
+        role, // Устанавливаем роль
         cart: { create: {} }, // Создаём корзину сразу при регистрации
       },
     });
@@ -40,7 +51,7 @@ export class AuthService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = this.jwtService.sign({ id: user.id, email: user.email });
+    const token = this.jwtService.sign({ id: user.id, email: user.email, role: user.role });
     return { token };
   }
 }
