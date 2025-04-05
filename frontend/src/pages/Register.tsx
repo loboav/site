@@ -41,7 +41,7 @@ export default function Register() {
             placeholder="Введите имя"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded text-black" // Добавлен класс text-black
             required
           />
           <input
@@ -49,7 +49,7 @@ export default function Register() {
             placeholder="Введите email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded text-black" // Добавлен класс text-black
             required
           />
           <input
@@ -57,7 +57,7 @@ export default function Register() {
             placeholder="Введите пароль"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded text-black" // Добавлен класс text-black
             required
           />
           <button type="submit" className="w-full bg-green-500 text-white p-2 rounded">

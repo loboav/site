@@ -17,7 +17,7 @@ export class AuthService {
       throw new BadRequestException('User already exists');
     }
 
-    // Устанавливаем роль
+    // Устанавливаем роль (по умолчанию 'user')
     let role = dto.role || 'user';
 
     if (role === 'admin') {
@@ -52,6 +52,6 @@ export class AuthService {
     }
 
     const token = this.jwtService.sign({ id: user.id, email: user.email, role: user.role });
-    return { token };
+    return { token, role: user.role }; // ✅ Теперь возвращаем и токен, и роль
   }
-}
+} 

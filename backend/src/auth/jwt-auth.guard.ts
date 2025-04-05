@@ -1,16 +1,16 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-    constructor(private jwtService: JwtService, private reflector: Reflector) {}
+    constructor(private jwtService: JwtService) {}
 
     canActivate(context: ExecutionContext): boolean {
         const request = context.switchToHttp().getRequest<Request>();
-        const authHeader = request.headers.authorization;
 
+        // ✅ Проверяем токен только при входе в аккаунт
+        const authHeader = request.headers.authorization;
         if (!authHeader) {
             throw new UnauthorizedException('Токен не найден');
         }

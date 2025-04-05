@@ -12,7 +12,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService], // Удалил JwtAuthGuard
-  exports: [AuthService, JwtModule], // Экспортируем JwtModule и AuthService
+  providers: [AuthService, PrismaService], 
+  exports: [AuthService, JwtModule], // ✅ Экспортируем JwtModule и AuthService
 })
 export class AuthModule {}
