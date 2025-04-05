@@ -10,6 +10,11 @@ import { Request } from 'express';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @Get('/product')
+  async redirectToProducts() {
+    return this.productService.findAll();
+  }
+
   @Get()
   async findAll() {
     return this.productService.findAll();

@@ -8,6 +8,8 @@ import Register from "./pages/Register";
 import CartPage from "./pages/CartPage";
 import Header from "./components/Header";
 import Footer from "./components/Footer"; // Импортируем подвал
+import AdminPanel from "./pages/AdminPanel"; // Импортируем AdminPanel
+import PromoPage from "./pages/PromoPage.tsx"; // Создаём страницу PromoPage
 
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -21,6 +23,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/admin" element={<AdminPanel />} /> {/* Добавляем маршрут */}
+            <Route path="/promo1" element={<PromoPage />} /> {/* Добавляем маршрут */}
           </Routes>
         </main>
         <Footer /> {/* Подвал */}

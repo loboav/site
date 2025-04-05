@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import AdminPanel from "./AdminPanel";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom"; // Добавляем useSearchParams
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,6 +10,7 @@ export default function Login() {
   const [role, setRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams(); // Получаем параметры из URL
 
   useEffect(() => {
     const savedRole = localStorage.getItem("role");
@@ -32,18 +33,18 @@ export default function Login() {
 
       console.log("Ответ от сервера:", response.data);
 
-      const { token, role } = response.data;
+      const { token, role } = response.data; // Получаем роль из ответа сервера
 
-      if (!token || !role) {
+      if (!token) {
         throw new Error("Неверный ответ от сервера");
       }
 
       localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
+      localStorage.setItem("role", role); // Сохраняем роль из ответа сервера
       setRole(role);
 
-      // Перенаправляем пользователя на страницу корзины
-      navigate("/cart");
+      // Перенаправляем пользователя на главную страницу
+      navigate("/");
     } catch (err: any) {
       console.error("Ошибка входа:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Ошибка входа: неверные данные");
@@ -73,7 +74,7 @@ export default function Login() {
             placeholder="Введите email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded text-black" // Добавлен класс text-black
             required
           />
           <input
@@ -81,7 +82,7 @@ export default function Login() {
             placeholder="Введите пароль"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded text-black" // Добавлен класс text-black
             required
           />
           <button

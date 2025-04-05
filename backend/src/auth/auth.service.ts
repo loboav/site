@@ -54,4 +54,8 @@ export class AuthService {
     const token = this.jwtService.sign({ id: user.id, email: user.email, role: user.role });
     return { token, role: user.role }; // ✅ Теперь возвращаем и токен, и роль
   }
-} 
+
+  async hashPassword(password: string): Promise<string> {
+    return await bcrypt.hash(password, 10);
+  }
+}

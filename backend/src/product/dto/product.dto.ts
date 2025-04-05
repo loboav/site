@@ -12,6 +12,10 @@ export class CreateProductDto {
   @IsNumber()
   @Min(0)
   stock: number;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
 }
 
 export class UpdateProductDto {
@@ -28,4 +32,8 @@ export class UpdateProductDto {
   @Min(0)
   @IsOptional()
   stock?: number;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
 }

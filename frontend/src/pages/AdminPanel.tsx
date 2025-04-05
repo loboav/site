@@ -21,7 +21,11 @@ export default function AdminPanel() {
 
   async function fetchProducts() {
     try {
-      const response = await axios.get("http://localhost:3000/product");
+      const response = await axios.get("http://localhost:3000/products", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       setProducts(response.data);
     } catch (err) {
       setError("Ошибка загрузки продуктов");
@@ -30,10 +34,26 @@ export default function AdminPanel() {
 
   // Добавление нового продукта
   async function handleAddProduct() {
-    if (!newProduct.name || !newProduct.price) return;
+    if (!newProduct.name || !newProduct.price || !newProduct.description) {
+      setError('Все поля обязательны для заполнения');
+      return;
+    }
 
     try {
-      await axios.post("http://localhost:3000/product", newProduct);
+      await axios.post(
+        "http://localhost:3000/products",
+        {
+          name: newProduct.name,
+          price: parseFloat(newProduct.price), // Преобразуем цену в число
+          stock: 100, // Укажите значение по умолчанию, если нужно
+          category: "Мёд", // Укажите категорию по умолчанию
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       setNewProduct({ name: "", price: "", description: "" });
       fetchProducts(); // Обновляем список
     } catch (err) {
@@ -44,7 +64,11 @@ export default function AdminPanel() {
   // Удаление продукта
   async function handleDeleteProduct(id: number) {
     try {
-      await axios.delete(`http://localhost:3000/product/${id}`);
+      await axios.delete(`http://localhost:3000/products/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       fetchProducts(); // Обновляем список
     } catch (err) {
       setError("Ошибка удаления продукта");
@@ -53,10 +77,26 @@ export default function AdminPanel() {
 
   // Изменение продукта
   async function handleEditProduct() {
-    if (!editProduct) return;
+    if (!editProduct || !editProduct.name || !editProduct.price || !editProduct.description) {
+      setError('Все поля обязательны для заполнения');
+      return;
+    }
 
     try {
-      await axios.put(`http://localhost:3000/product/${editProduct.id}`, editProduct);
+      await axios.patch(
+        `http://localhost:3000/products/${editProduct.id}`,
+        {
+          name: editProduct.name,
+          price: editProduct.price,
+          stock: 100, // Укажите значение по умолчанию, если нужно
+          category: "Мёд", // Укажите категорию по умолчанию
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       setEditProduct(null);
       fetchProducts(); // Обновляем список
     } catch (err) {
@@ -76,22 +116,28 @@ export default function AdminPanel() {
         <input
           type="text"
           placeholder="Название"
-          value={newProduct.name}
-          onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+          value={newProduct.name || ""} // Убедимся, что значение всегда строка
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setNewProduct({ ...newProduct, name: e.target.value })
+          }
           className="border p-2 mr-2"
         />
         <input
           type="number"
           placeholder="Цена"
-          value={newProduct.price}
-          onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+          value={newProduct.price || ""} // Убедимся, что значение всегда строка
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setNewProduct({ ...newProduct, price: e.target.value })
+          }
           className="border p-2 mr-2"
         />
         <input
           type="text"
           placeholder="Описание"
-          value={newProduct.description}
-          onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+          value={newProduct.description || ""} // Убедимся, что значение всегда строка
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setNewProduct({ ...newProduct, description: e.target.value })
+          }
           className="border p-2 mr-2"
         />
         <button className="bg-blue-500 text-white px-4 py-2" onClick={handleAddProduct}>
@@ -142,20 +188,26 @@ export default function AdminPanel() {
           <h2 className="text-xl font-semibold mb-2">Редактировать продукт</h2>
           <input
             type="text"
-            value={editProduct.name}
-            onChange={(e) => setEditProduct({ ...editProduct, name: e.target.value })}
+            value={editProduct?.name || ""} // Убедимся, что значение всегда строка
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEditProduct({ ...editProduct, name: e.target.value })
+            }
             className="border p-2 mr-2"
           />
           <input
             type="number"
-            value={editProduct.price}
-            onChange={(e) => setEditProduct({ ...editProduct, price: +e.target.value })}
+            value={editProduct?.price || ""} // Убедимся, что значение всегда строка
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEditProduct({ ...editProduct, price: +e.target.value })
+            }
             className="border p-2 mr-2"
           />
           <input
             type="text"
-            value={editProduct.description}
-            onChange={(e) => setEditProduct({ ...editProduct, description: e.target.value })}
+            value={editProduct?.description || ""} // Убедимся, что значение всегда строка
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEditProduct({ ...editProduct, description: e.target.value })
+            }
             className="border p-2 mr-2"
           />
           <button className="bg-green-500 text-white px-4 py-2" onClick={handleEditProduct}>

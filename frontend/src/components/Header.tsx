@@ -5,6 +5,7 @@ export default function Header() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [loginType, setLoginType] = useState("client");
+  const role = localStorage.getItem("role"); // Получаем роль из localStorage
 
   return (
     <>
@@ -14,18 +15,40 @@ export default function Header() {
           My Honey Shop 🍯
         </Link>
         <div>
-          <button 
-            className="mr-4 bg-blue-500 text-white px-4 py-2 rounded" 
-            onClick={() => setShowLoginModal(true)}
-          >
-            Войти
-          </button>
-          <button 
-            className="bg-green-500 text-white px-4 py-2 rounded" 
-            onClick={() => setShowRegisterModal(true)}
-          >
-            Зарегистрироваться
-          </button>
+          {role === "admin" && ( // Показываем кнопку AdminPanel только для администраторов
+            <Link
+              to="/admin"
+              className="mr-4 bg-yellow-500 text-white px-4 py-2 rounded"
+            >
+              AdminPanel
+            </Link>
+          )}
+          {role ? (
+            <button
+              className="mr-4 bg-red-500 text-white px-4 py-2 rounded"
+              onClick={() => {
+                localStorage.clear();
+                window.location.reload();
+              }}
+            >
+              Выйти
+            </button>
+          ) : (
+            <>
+              <button 
+                className="mr-4 bg-blue-500 text-white px-4 py-2 rounded" 
+                onClick={() => setShowLoginModal(true)}
+              >
+                Войти
+              </button>
+              <button 
+                className="bg-green-500 text-white px-4 py-2 rounded" 
+                onClick={() => setShowRegisterModal(true)}
+              >
+                Зарегистрироваться
+              </button>
+            </>
+          )}
         </div>
       </header>
 
