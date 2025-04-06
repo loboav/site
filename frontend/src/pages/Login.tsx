@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import AdminPanel from "./AdminPanel";
-import { useNavigate, useSearchParams } from "react-router-dom"; // Добавляем useSearchParams
+import { useNavigate } from "react-router-dom"; // Удаляем useSearchParams
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,7 +10,6 @@ export default function Login() {
   const [role, setRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams(); // Получаем параметры из URL
 
   useEffect(() => {
     const savedRole = localStorage.getItem("role");

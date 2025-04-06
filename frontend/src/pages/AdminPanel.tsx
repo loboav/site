@@ -6,6 +6,7 @@ interface Product {
   name: string;
   price: number;
   description: string;
+  stock: number; // Добавлено поле stock
 }
 
 export default function AdminPanel() {
@@ -77,7 +78,7 @@ export default function AdminPanel() {
 
   // Изменение продукта
   async function handleEditProduct() {
-    if (!editProduct || !editProduct.name || !editProduct.price || !editProduct.description) {
+    if (!editProduct || !editProduct.name || !editProduct.price || !editProduct.description || editProduct.stock === undefined) {
       setError('Все поля обязательны для заполнения');
       return;
     }
@@ -88,7 +89,7 @@ export default function AdminPanel() {
         {
           name: editProduct.name,
           price: editProduct.price,
-          stock: 100, // Укажите значение по умолчанию, если нужно
+          stock: editProduct.stock, // Добавлено поле stock
           category: "Мёд", // Укажите категорию по умолчанию
         },
         {
@@ -199,6 +200,15 @@ export default function AdminPanel() {
             value={editProduct?.price || ""} // Убедимся, что значение всегда строка
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setEditProduct({ ...editProduct, price: +e.target.value })
+            }
+            className="border p-2 mr-2"
+          />
+          <input
+            type="number"
+            placeholder="Количество"
+            value={editProduct?.stock || ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEditProduct({ ...editProduct, stock: +e.target.value })
             }
             className="border p-2 mr-2"
           />

@@ -6,6 +6,6 @@ export class AddToCartDto {
   productId: string;
 
   @IsNumber()
-  @Min(1)
+  @Min(1) // Убедиться, что количество всегда положительное
   quantity: number;
 }

@@ -4,6 +4,7 @@ import axios from "axios";
 interface CartItem {
   id: string;
   product: {
+    id: string; // Добавлено свойство id
     name: string;
     price: number;
   };
@@ -37,12 +38,24 @@ export default function CartPage() {
       (sum, item) => sum + item.product.price * item.quantity,
       0
     );
-    setTotalPrice(total);
+    setTotalPrice(parseFloat(total.toFixed(2))); // Округляем до 2 знаков
   }
 
   async function updateQuantity(itemId: string, newQuantity: number) {
     try {
-      if (newQuantity === 0) {
+      const currentItem = cartItems.find(item => item.id === itemId);
+      if (!currentItem) {
+        console.error("Товар не найден в корзине.");
+        return;
+      }
+
+      if (!currentItem.product.id) {
+        console.error("ID продукта отсутствует.");
+        return;
+      }
+
+      if (newQuantity <= 0) {
+        console.log("Удаление товара из корзины:", { itemId }); // Логируем данные
         await axios.delete(`http://localhost:3000/cart/${itemId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -50,9 +63,13 @@ export default function CartPage() {
         });
         setCartItems((prev) => prev.filter((item) => item.id !== itemId));
       } else {
+        console.log("Обновление количества:", {
+          productId: currentItem.product.id,
+          quantity: newQuantity - currentItem.quantity,
+        }); // Логируем данные
         await axios.post(
           "http://localhost:3000/cart/add",
-          { productId: itemId, quantity: newQuantity },
+          { productId: currentItem.product.id, quantity: newQuantity - currentItem.quantity },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -108,13 +125,13 @@ export default function CartPage() {
                   </div>
                 </div>
                 <p className="text-lg font-bold">
-                  Сумма: {item.product.price * item.quantity} руб.
+                  Сумма: {(item.product.price * item.quantity).toFixed(2)} руб.
                 </p>
               </li>
             ))}
           </ul>
           <div className="mt-6 text-right">
-            <h2 className="text-xl font-bold">Общая стоимость: {totalPrice} руб.</h2>
+            <h2 className="text-xl font-bold">Общая стоимость: {totalPrice.toFixed(2)} руб.</h2>
           </div>
         </div>
       )}

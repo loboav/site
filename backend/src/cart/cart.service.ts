@@ -10,37 +10,53 @@ export class CartService {
   async addToCart(userId: string, dto: AddToCartDto) {
     const { productId, quantity } = dto;
 
-    // Проверяем, существует ли корзина
-    let cart = await this.prisma.cart.findUnique({
-      where: { userId },
-      include: { items: true }, // Теперь items точно есть
+    console.log("Добавление в корзину:", { userId, productId, quantity }); // Логируем входные данные
+
+    if (quantity === 0) {
+      throw new Error("Количество не может быть равно нулю");
+    }
+
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
     });
 
-    // Если корзины нет — создаем
+    if (!product) {
+      console.error("Продукт не найден:", productId); // Логируем ошибку
+      throw new NotFoundException("Товар не найден");
+    }
+
+    let cart = await this.prisma.cart.findUnique({
+      where: { userId },
+      include: { items: true },
+    });
+
     if (!cart) {
       cart = await this.prisma.cart.create({
         data: { userId },
-        include: { items: true }, // Указываем, что хотим вернуть items
+        include: { items: true },
       });
     }
 
-    if (!cart?.id) {
-      throw new NotFoundException("Ошибка создания корзины");
-    }
-
-    // Проверяем, есть ли товар в корзине
     const existingItem = await this.prisma.cartItem.findFirst({
       where: { cartId: cart.id, productId },
     });
 
     if (existingItem) {
-      // Если товар уже в корзине, обновляем количество
+      const updatedQuantity = existingItem.quantity + quantity;
+      if (updatedQuantity <= 0) {
+        console.log("Удаление товара из корзины:", { cartItemId: existingItem.id });
+        return await this.prisma.cartItem.delete({
+          where: { id: existingItem.id },
+        });
+      }
       return await this.prisma.cartItem.update({
         where: { id: existingItem.id },
-        data: { quantity: existingItem.quantity + quantity },
+        data: { quantity: updatedQuantity },
       });
     } else {
-      // Если товара нет, добавляем
+      if (quantity < 0) {
+        throw new Error("Невозможно уменьшить количество товара, которого нет в корзине");
+      }
       return await this.prisma.cartItem.create({
         data: {
           cartId: cart.id,
