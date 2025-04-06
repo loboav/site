@@ -14,6 +14,18 @@ export default function Header() {
         <Link to="/" className="text-xl font-bold text-yellow-600 no-underline hover:no-underline">
           My Honey Shop 🍯
         </Link>
+        <div className="flex items-center space-x-6">
+          {/* Добавляем почту */}
+          <a href="mailto:lobovp@yandex.ru" className="text-gray-700 hover:underline">
+            lobovp@yandex.ru
+          </a>
+          {/* Добавляем время работы */}
+          <span className="text-gray-700">08:00 - 20:00</span>
+          {/* Добавляем номер телефона */}
+          <a href="tel:+375296860961" className="text-gray-700 hover:underline">
+            +375 29 686-09-61
+          </a>
+        </div>
         <div>
           {role === "admin" && ( // Показываем кнопку AdminPanel только для администраторов
             <Link
