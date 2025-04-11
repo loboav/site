@@ -20,14 +20,16 @@ model User {
 }
 
 model Product {
-  id       String   @id @default(uuid())
-  name     String
-  price    Float
-  stock    Int
-  category String  @default("Мёд")
-  createdAt DateTime @default(now())
+  id          String   @id @default(uuid())
+  name        String
+  price       Float
+  stock       Int
+  category    String  @default("Мёд")
+  createdAt   DateTime @default(now())
+  image       String? // Поле для хранения пути к изображению
+  description String? // Добавляем описание товара
 
-  cartItems CartItem[] // Обратная связь с `CartItem`
+  cartItems   CartItem[] // Обратная связь с `CartItem`
 }
 
 model Cart {

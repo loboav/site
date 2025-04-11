@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import axios from "axios";
 
 interface Product {
@@ -12,7 +12,9 @@ interface Product {
 export default function AdminPanel() {
   const [products, setProducts] = useState<Product[]>([]);
   const [newProduct, setNewProduct] = useState({ name: "", price: "", description: "" });
+  const [newProductImage, setNewProductImage] = useState<File | null>(null);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [editProductImage, setEditProductImage] = useState<File | null>(null);
   const [error, setError] = useState("");
 
   // Получаем список продуктов
@@ -40,23 +42,24 @@ export default function AdminPanel() {
       return;
     }
 
+    const formData = new FormData();
+    formData.append("name", newProduct.name);
+    formData.append("price", newProduct.price);
+    formData.append("description", newProduct.description);
+    if (newProductImage) {
+      formData.append("image", newProductImage);
+    }
+
     try {
-      await axios.post(
-        "http://localhost:3000/products",
-        {
-          name: newProduct.name,
-          price: parseFloat(newProduct.price), // Преобразуем цену в число
-          stock: 100, // Укажите значение по умолчанию, если нужно
-          category: "Мёд", // Укажите категорию по умолчанию
+      await axios.post("http://localhost:3000/products", formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
         },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      });
       setNewProduct({ name: "", price: "", description: "" });
-      fetchProducts(); // Обновляем список
+      setNewProductImage(null);
+      fetchProducts();
     } catch (err) {
       setError("Ошибка добавления продукта");
     }
@@ -83,23 +86,24 @@ export default function AdminPanel() {
       return;
     }
 
+    const formData = new FormData();
+    formData.append("name", editProduct.name);
+    formData.append("price", editProduct.price.toString());
+    formData.append("description", editProduct.description);
+    if (editProductImage) {
+      formData.append("image", editProductImage);
+    }
+
     try {
-      await axios.patch(
-        `http://localhost:3000/products/${editProduct.id}`,
-        {
-          name: editProduct.name,
-          price: editProduct.price,
-          stock: editProduct.stock, // Добавлено поле stock
-          category: "Мёд", // Укажите категорию по умолчанию
+      await axios.patch(`http://localhost:3000/products/${editProduct.id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
         },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      });
       setEditProduct(null);
-      fetchProducts(); // Обновляем список
+      setEditProductImage(null);
+      fetchProducts();
     } catch (err) {
       setError("Ошибка изменения продукта");
     }
@@ -139,6 +143,16 @@ export default function AdminPanel() {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setNewProduct({ ...newProduct, description: e.target.value })
           }
+          className="border p-2 mr-2"
+        />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            if (e.target.files) {
+              setNewProductImage(e.target.files[0]);
+            }
+          }}
           className="border p-2 mr-2"
         />
         <button className="bg-blue-500 text-white px-4 py-2" onClick={handleAddProduct}>
@@ -210,6 +224,16 @@ export default function AdminPanel() {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setEditProduct({ ...editProduct, stock: +e.target.value })
             }
+            className="border p-2 mr-2"
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              if (e.target.files) {
+                setEditProductImage(e.target.files[0]);
+              }
+            }}
             className="border p-2 mr-2"
           />
           <input

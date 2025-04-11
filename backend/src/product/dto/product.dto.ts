@@ -16,6 +16,10 @@ export class CreateProductDto {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @IsString()
+  @IsOptional()
+  image?: string;
 }
 
 export class UpdateProductDto {
@@ -36,4 +40,8 @@ export class UpdateProductDto {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @IsString()
+  @IsOptional()
+  image?: string;
 }

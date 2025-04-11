@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto, UpdateProductDto } from 'src/product/dto/product.dto';
 
 @Injectable()
 export class ProductService {
+  private readonly logger = new Logger(ProductService.name);
+
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateProductDto, userRole: string) {
@@ -11,7 +13,13 @@ export class ProductService {
       throw new ForbiddenException('Только администратор может добавлять товары');
     }
     try {
-      return await this.prisma.product.create({ data: dto });
+      // Преобразуем price в число и добавляем stock, если отсутствует
+      const data = {
+        ...dto,
+        price: parseFloat(dto.price.toString()),
+        stock: dto.stock ?? 0, // Устанавливаем значение по умолчанию
+      };
+      return await this.prisma.product.create({ data });
     } catch (error) {
       throw new Error(`Ошибка создания продукта: ${error.message}`);
     }
@@ -36,7 +44,13 @@ export class ProductService {
       if (!product) {
         throw new NotFoundException('Товар не найден');
       }
-      return await this.prisma.product.update({ where: { id }, data: dto });
+      // Преобразуем price в число, если оно передано
+      const data = {
+        ...dto,
+        price: dto.price ? parseFloat(dto.price.toString()) : undefined,
+      };
+      this.logger.log('Updating product with data:', data);
+      return await this.prisma.product.update({ where: { id }, data });
     } catch (error) {
       throw new Error(`Ошибка обновления продукта: ${error.message}`);
     }

@@ -10,7 +10,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer"; // Импортируем подвал
 import AdminPanel from "./pages/AdminPanel"; // Импортируем AdminPanel
 import PromoPage from "./pages/PromoPage.tsx"; // Создаём страницу PromoPage
-
+import ProductDetails from "./pages/ProductDetails"; // Импортируем страницу ProductDetails
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -25,6 +25,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/cart" element={<CartPage />} />
             <Route path="/admin" element={<AdminPanel />} /> {/* Добавляем маршрут */}
             <Route path="/promo1" element={<PromoPage />} /> {/* Добавляем маршрут */}
+            <Route path="/product/:id" element={<ProductDetails />} /> {/* Добавляем маршрут для ProductDetails */}
           </Routes>
         </main>
         <Footer /> {/* Подвал */}
