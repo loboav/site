@@ -13,11 +13,11 @@ export class ProductService {
       throw new ForbiddenException('Только администратор может добавлять товары');
     }
     try {
-      // Преобразуем price в число и добавляем stock, если отсутствует
+      // Преобразуем price и stock в числа
       const data = {
         ...dto,
         price: parseFloat(dto.price.toString()),
-        stock: dto.stock ?? 0, // Устанавливаем значение по умолчанию
+        stock: parseInt(dto.stock.toString(), 10) || 0, // Устанавливаем значение по умолчанию
       };
       return await this.prisma.product.create({ data });
     } catch (error) {
@@ -44,10 +44,11 @@ export class ProductService {
       if (!product) {
         throw new NotFoundException('Товар не найден');
       }
-      // Преобразуем price в число, если оно передано
+      // Преобразуем price и stock в числа, если они переданы
       const data = {
         ...dto,
         price: dto.price ? parseFloat(dto.price.toString()) : undefined,
+        stock: dto.stock ? parseInt(dto.stock.toString(), 10) : undefined,
       };
       this.logger.log('Updating product with data:', data);
       return await this.prisma.product.update({ where: { id }, data });

@@ -11,7 +11,7 @@ interface Product {
 
 export default function AdminPanel() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [newProduct, setNewProduct] = useState({ name: "", price: "", description: "" });
+  const [newProduct, setNewProduct] = useState({ name: "", price: "", description: "", stock: "" });
   const [newProductImage, setNewProductImage] = useState<File | null>(null);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [editProductImage, setEditProductImage] = useState<File | null>(null);
@@ -37,7 +37,7 @@ export default function AdminPanel() {
 
   // Добавление нового продукта
   async function handleAddProduct() {
-    if (!newProduct.name || !newProduct.price || !newProduct.description) {
+    if (!newProduct.name || !newProduct.price || !newProduct.description || !newProduct.stock) {
       setError('Все поля обязательны для заполнения');
       return;
     }
@@ -46,6 +46,7 @@ export default function AdminPanel() {
     formData.append("name", newProduct.name);
     formData.append("price", newProduct.price);
     formData.append("description", newProduct.description);
+    formData.append("stock", newProduct.stock);
     if (newProductImage) {
       formData.append("image", newProductImage);
     }
@@ -57,7 +58,7 @@ export default function AdminPanel() {
           "Content-Type": "multipart/form-data",
         },
       });
-      setNewProduct({ name: "", price: "", description: "" });
+      setNewProduct({ name: "", price: "", description: "", stock: "" });
       setNewProductImage(null);
       fetchProducts();
     } catch (err) {
@@ -90,6 +91,7 @@ export default function AdminPanel() {
     formData.append("name", editProduct.name);
     formData.append("price", editProduct.price.toString());
     formData.append("description", editProduct.description);
+    formData.append("stock", editProduct.stock.toString());
     if (editProductImage) {
       formData.append("image", editProductImage);
     }
@@ -142,6 +144,15 @@ export default function AdminPanel() {
           value={newProduct.description || ""} // Убедимся, что значение всегда строка
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setNewProduct({ ...newProduct, description: e.target.value })
+          }
+          className="border p-2 mr-2"
+        />
+        <input
+          type="number"
+          placeholder="Количество"
+          value={newProduct.stock || ""} // Убедимся, что значение всегда строка
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setNewProduct({ ...newProduct, stock: e.target.value })
           }
           className="border p-2 mr-2"
         />
