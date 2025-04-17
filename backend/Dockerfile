@@ -19,6 +19,9 @@ RUN apt-get update -y && apt-get install -y postgresql-client
 # Копируем весь проект
 COPY . .
 
+# Копируем .env.example и создаём .env, если его нет
+RUN if [ ! -f .env ]; then cp .env.example .env; fi
+
 # Генерируем Prisma Client
 RUN npx prisma generate
 

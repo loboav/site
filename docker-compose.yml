@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   frontend:
     build:
@@ -7,8 +5,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5173:5173"
-    environment:
-      - VITE_API_URL=http://backend:3000
+    env_file:
+      - ./frontend/.env
     depends_on:
       - backend
 
@@ -18,10 +16,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    environment:
-      - DATABASE_URL=postgresql://postgres:password@db:5432/my-honey-shop
-      - JWT_SECRET=2005
-      - NODE_ENV=production
+      - "5555:5555" # Пробрасываем порт Prisma Studio
+    env_file:
+      - ./backend/.env
     depends_on:
       - db
 
