@@ -8,42 +8,39 @@ datasource db {
 }
 
 model User {
-  id        String  @id @default(uuid())
+  id        String   @id @default(uuid())
   name      String
-  email     String  @unique
+  email     String   @unique
   password  String
   createdAt DateTime @default(now())
-
-  role      String  @default("user") // Добавляем поле роли
-
-  cart      Cart?   @relation("UserCart")
+  role      String   @default("user")
+  cart      Cart?    @relation("UserCart")
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   name        String
   price       Float
   stock       Int
-  category    String  @default("Мёд")
-  createdAt   DateTime @default(now())
-  image       String? // Поле для хранения пути к изображению
-  description String? // Добавляем описание товара
-
-  cartItems   CartItem[] // Обратная связь с `CartItem`
+  category    String     @default("Мёд")
+  createdAt   DateTime   @default(now())
+  image       String?
+  description String?
+  cartItems   CartItem[]
 }
 
 model Cart {
-  id     String  @id @default(uuid())
-  user   User    @relation("UserCart", fields: [userId], references: [id]) // Оставляем связь здесь
-  userId String  @unique
+  id     String     @id @default(uuid())
+  userId String     @unique
+  user   User       @relation("UserCart", fields: [userId], references: [id])
   items  CartItem[]
 }
 
 model CartItem {
-  id        String   @id @default(uuid())
-  cart      Cart     @relation(fields: [cartId], references: [id])
+  id        String  @id @default(uuid())
   cartId    String
-  product   Product  @relation(fields: [productId], references: [id])
   productId String
   quantity  Int
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }
