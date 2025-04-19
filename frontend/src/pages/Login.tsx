@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from '../apiClient';
 import AdminPanel from "./AdminPanel";
 import { useNavigate } from "react-router-dom"; // Удаляем useSearchParams
 
@@ -25,7 +25,7 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:3000/auth/login", {
+      const response = await api.post("/auth/login", {
         email,
         password,
       });

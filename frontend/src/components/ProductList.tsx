@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
+import api from '../apiClient';
 
 // Определяем интерфейс для продукта
 interface Product {
@@ -15,9 +16,9 @@ export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([]); // Задаем массив продуктов
 
   useEffect(() => {
-    fetch("http://localhost:3000/products")
-      .then((res) => res.json())
-      .then((data: Product[]) => setProducts(data)); // Указываем, что `data` - массив `Product`
+    api.get("/products")
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.error("Ошибка загрузки продуктов:", err));
   }, []);
 
   return (

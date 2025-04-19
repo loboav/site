@@ -66,7 +66,12 @@ export class ProductService {
       if (!product) {
         throw new NotFoundException('Товар не найден');
       }
-      return await this.prisma.product.delete({ where: { id } });
+      // Всё в одной транзакции!
+      await this.prisma.$transaction([
+        this.prisma.cartItem.deleteMany({ where: { productId: id } }),
+        this.prisma.product.delete({ where: { id } }),
+      ]);
+      return { message: 'Товар и связанные позиции в корзинах удалены' };
     } catch (error) {
       throw new Error(`Ошибка удаления продукта: ${error.message}`);
     }

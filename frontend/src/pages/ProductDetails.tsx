@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from '../apiClient';
 
 // Определяем интерфейс для продукта
 interface Product {
@@ -19,8 +19,7 @@ export default function ProductDetails() {
 
   useEffect(() => {
     // Загружаем данные о товаре
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/products/${id}`)
+    api.get(`/products/${id}`)
       .then((response) => setProduct(response.data))
       .catch((error) => console.error("Ошибка загрузки товара:", error));
   }, [id]);
@@ -28,21 +27,10 @@ export default function ProductDetails() {
   const handleAddToCart = () => {
     if (!product) return; // Проверяем, что product не равен null
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Пожалуйста, войдите в аккаунт, чтобы добавить товар в корзину.");
-      return;
-    }
-
-    axios
+    api
       .post(
-        `${import.meta.env.VITE_API_URL}/cart/add`,
-        { productId: product.id, quantity },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        "/cart/add",
+        { productId: product.id, quantity }
       )
       .then(() => alert("Товар добавлен в корзину!"))
       .catch((error) => {
@@ -59,7 +47,7 @@ export default function ProductDetails() {
     <div className="container mx-auto p-4">
       <div className="flex flex-col md:flex-row items-center">
         <img
-          src={product.image ? `http://localhost:3000${product.image}` : "/images/default-honey.jpg"}
+          src={product.image ? `${import.meta.env.VITE_API_URL}${product.image}` : "/images/default-honey.jpg"}
           alt={product.name}
           className="w-full md:w-1/2 h-auto object-cover rounded"
         />

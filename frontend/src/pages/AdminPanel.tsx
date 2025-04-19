@@ -1,5 +1,5 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import axios from "axios";
+import api from '../apiClient';
 
 interface Product {
   id: number;
@@ -24,11 +24,7 @@ export default function AdminPanel() {
 
   async function fetchProducts() {
     try {
-      const response = await axios.get("http://localhost:3000/products", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await api.get("/products");
       setProducts(response.data);
     } catch (err) {
       setError("Ошибка загрузки продуктов");
@@ -52,9 +48,8 @@ export default function AdminPanel() {
     }
 
     try {
-      await axios.post("http://localhost:3000/products", formData, {
+      await api.post("/products", formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -69,11 +64,7 @@ export default function AdminPanel() {
   // Удаление продукта
   async function handleDeleteProduct(id: number) {
     try {
-      await axios.delete(`http://localhost:3000/products/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await api.delete(`/products/${id}`);
       fetchProducts(); // Обновляем список
     } catch (err) {
       setError("Ошибка удаления продукта");
@@ -97,9 +88,8 @@ export default function AdminPanel() {
     }
 
     try {
-      await axios.patch(`http://localhost:3000/products/${editProduct.id}`, formData, {
+      await api.patch(`/products/${editProduct.id}`, formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "multipart/form-data",
         },
       });

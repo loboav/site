@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from '../apiClient';
 
 interface CartItem {
   id: string;
@@ -21,11 +21,7 @@ export default function CartPage() {
 
   async function fetchCart() {
     try {
-      const response = await axios.get("http://localhost:3000/cart", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await api.get("/cart");
       setCartItems(response.data.items);
       calculateTotal(response.data.items);
     } catch (err) {
@@ -56,25 +52,16 @@ export default function CartPage() {
 
       if (newQuantity <= 0) {
         console.log("Удаление товара из корзины:", { itemId }); // Логируем данные
-        await axios.delete(`http://localhost:3000/cart/${itemId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        await api.delete(`/cart/${itemId}`);
         setCartItems((prev) => prev.filter((item) => item.id !== itemId));
       } else {
         console.log("Обновление количества:", {
           productId: currentItem.product.id,
           quantity: newQuantity - currentItem.quantity,
         }); // Логируем данные
-        await axios.post(
-          "http://localhost:3000/cart/add",
-          { productId: currentItem.product.id, quantity: newQuantity - currentItem.quantity },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
+        await api.post(
+          "/cart/add",
+          { productId: currentItem.product.id, quantity: newQuantity - currentItem.quantity }
         );
         setCartItems((prev) =>
           prev.map((item) =>

@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useState } from "react";
 import Modal from "./Modal.tsx"; // Убедимся, что путь к Modal корректен
 import { Link } from "react-router-dom"; // Импортируем Link для навигации
+import api from "../apiClient";
 
 // Добавляем описание в интерфейс Product
 interface Product {
@@ -25,17 +25,10 @@ export default function ProductCard({ product }: { product: Product }) {
         alert("Пожалуйста, войдите в аккаунт, чтобы добавить товар в корзину.");
         return;
       }
-
-      await axios.post(
-        "http://localhost:3000/cart/add",
-        { productId: product.id, quantity: 1 },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      await api.post(
+        "/cart/add",
+        { productId: product.id, quantity: 1 }
       );
-
       alert("Товар добавлен в корзину!");
     } catch (error) {
       console.error("Ошибка при добавлении товара в корзину:", error);
@@ -48,7 +41,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <div className="border rounded-lg p-4 shadow-md">
       <img
-        src={product.image ? `http://localhost:3000${product.image}` : "/images/default-honey.jpg"}
+        src={product.image ? `${import.meta.env.VITE_API_URL}${product.image}` : "/images/default-honey.jpg"}
         alt={product.name}
         className="w-full h-40 object-cover rounded"
       />
@@ -84,7 +77,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <Modal onClose={() => setIsModalOpen(false)}>
           <div className="p-4">
             <img
-              src={product.image ? `http://localhost:3000${product.image}` : "/images/default-honey.jpg"}
+              src={product.image ? `${import.meta.env.VITE_API_URL}${product.image}` : "/images/default-honey.jpg"}
               alt={product.name}
               className="w-full h-40 object-cover rounded mb-4"
             />
