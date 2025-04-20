@@ -2,13 +2,14 @@ import { Body, Controller, Post, UseGuards, Req, Get, BadRequestException } from
 import { AuthService } from './auth.service';
 import { RegisterDto, LoginDto } from './auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { PrismaService } from 'src/prisma/prisma.service'; // Импортируем PrismaService
+import { PrismaService } from 'src/prisma/prisma.service';
+import { $Enums } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private prisma: PrismaService, // Добавляем PrismaService
+    private prisma: PrismaService,
   ) {}
 
   @Post('register')
@@ -24,7 +25,7 @@ export class AuthController {
   @Get('admins')
   async getAdmins() {
     const admins = await this.prisma.user.findMany({
-      where: { role: 'admin' },
+      where: { role: $Enums.Role.admin },
     });
 
     if (admins.length === 0) {
@@ -32,8 +33,8 @@ export class AuthController {
       const defaultAdmin = {
         name: 'Default Admin',
         email: 'admin@myhoneyshop.com',
-        password: 'admin123', // Пароль по умолчанию
-        role: 'admin',
+        password: 'admin123',
+        role: $Enums.Role.admin,
       };
 
       const hashedPassword = await this.authService.hashPassword(

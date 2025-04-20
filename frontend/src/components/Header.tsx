@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Header() {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [loginType, setLoginType] = useState("client");
   const role = localStorage.getItem("role"); // Получаем роль из localStorage
+  const navigate = useNavigate();
 
   return (
     <>
@@ -27,7 +27,7 @@ export default function Header() {
           </a>
         </div>
         <div>
-          {role === "admin" && ( // Показываем кнопку AdminPanel только для администраторов
+          {role === "admin" && (
             <Link
               to="/admin"
               className="mr-4 bg-yellow-500 text-white px-4 py-2 rounded"
@@ -55,7 +55,7 @@ export default function Header() {
               </button>
               <button 
                 className="bg-green-500 text-white px-4 py-2 rounded" 
-                onClick={() => setShowRegisterModal(true)}
+                onClick={() => navigate("/register")}
               >
                 Зарегистрироваться
               </button>
@@ -77,7 +77,7 @@ export default function Header() {
       {/* Добавим отступ, чтобы контент не заезжал под меню */}
       <div className="mt-24"></div>
 
-      {/* Модальные окна */}
+      {/* Модальное окно только для входа */}
       {showLoginModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-96">
@@ -98,16 +98,6 @@ export default function Header() {
             </div>
             <Link to={`/login?type=${loginType}`} className="block bg-blue-600 text-white p-2 rounded text-center">Перейти ко входу</Link>
             <button className="mt-4 text-red-500" onClick={() => setShowLoginModal(false)}>Закрыть</button>
-          </div>
-        </div>
-      )}
-
-      {showRegisterModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Регистрация</h2>
-            <Link to="/register" className="block bg-green-500 text-white p-2 rounded">Перейти к регистрации</Link>
-            <button className="mt-4 text-red-500" onClick={() => setShowRegisterModal(false)}>Закрыть</button>
           </div>
         </div>
       )}

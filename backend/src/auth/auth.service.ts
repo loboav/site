@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterDto, LoginDto } from './auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { $Enums } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -18,13 +19,13 @@ export class AuthService {
     }
 
     // Устанавливаем роль (по умолчанию 'user')
-    let role = dto.role || 'user';
-
-    if (role === 'admin') {
+    let role: $Enums.Role = $Enums.Role.user;
+    if (dto.role === 'admin') {
       // Только администраторы могут регистрировать администраторов
       if (!currentUser || currentUser.role !== 'admin') {
         throw new ForbiddenException('Only admins can create admins');
       }
+      role = $Enums.Role.admin;
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -34,7 +35,7 @@ export class AuthService {
         name: dto.name,
         email: dto.email,
         password: hashedPassword,
-        role, // Устанавливаем роль
+        role, // Устанавливаем роль через enum
         cart: { create: {} }, // Создаём корзину сразу при регистрации
       },
     });
