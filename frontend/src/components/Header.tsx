@@ -9,8 +9,6 @@ interface Category {
 
 export default function Header() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginType, setLoginType] = useState("client");
   const location = useLocation();
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
@@ -60,7 +58,7 @@ export default function Header() {
             <>
               <button 
                 className="mr-4 bg-yellow-400 text-black px-4 py-2 rounded font-semibold hover:bg-yellow-500 transition-colors" 
-                onClick={() => setShowLoginModal(true)}
+                onClick={() => navigate("/login")}
               >
                 Войти
               </button>
@@ -94,31 +92,6 @@ export default function Header() {
         </ul>
       </nav>
       <div className="mt-24"></div>
-
-      {/* Модальное окно только для входа */}
-      {showLoginModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Выберите вход</h2>
-            <div className="flex space-x-2 mb-4">
-              <button 
-                className={`p-2 flex-1 rounded ${loginType === "client" ? "bg-blue-500 text-white" : "bg-gray-200"}`} 
-                onClick={() => setLoginType("client")}
-              >
-                Клиент
-              </button>
-              <button 
-                className={`p-2 flex-1 rounded ${loginType === "company" ? "bg-blue-500 text-white" : "bg-gray-200"}`} 
-                onClick={() => setLoginType("company")}
-              >
-                Компания
-              </button>
-            </div>
-            <Link to={`/login?type=${loginType}`} className="block bg-blue-600 text-white p-2 rounded text-center">Перейти ко входу</Link>
-            <button className="mt-4 text-red-500" onClick={() => setShowLoginModal(false)}>Закрыть</button>
-          </div>
-        </div>
-      )}
     </>
   );
 }
