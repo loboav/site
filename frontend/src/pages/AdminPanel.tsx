@@ -6,20 +6,29 @@ interface Product {
   name: string;
   price: number;
   description: string;
-  stock: number; // Добавлено поле stock
+  stock: number;
+  categoryId?: string;
+}
+
+interface Category {
+  id: string;
+  name: string;
 }
 
 export default function AdminPanel() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [newProduct, setNewProduct] = useState({ name: "", price: "", description: "", stock: "" });
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [newProduct, setNewProduct] = useState({ name: "", price: "", description: "", stock: "", categoryId: "" });
   const [newProductImage, setNewProductImage] = useState<File | null>(null);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [editProductImage, setEditProductImage] = useState<File | null>(null);
   const [error, setError] = useState("");
+  const [newCategory, setNewCategory] = useState("");
 
   // Получаем список продуктов
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   async function fetchProducts() {
@@ -31,9 +40,18 @@ export default function AdminPanel() {
     }
   }
 
+  async function fetchCategories() {
+    try {
+      const response = await api.get("/categories");
+      setCategories(response.data);
+    } catch (err) {
+      setError("Ошибка загрузки категорий");
+    }
+  }
+
   // Добавление нового продукта
   async function handleAddProduct() {
-    if (!newProduct.name || !newProduct.price || !newProduct.description || !newProduct.stock) {
+    if (!newProduct.name || !newProduct.price || !newProduct.description || !newProduct.stock || !newProduct.categoryId) {
       setError('Все поля обязательны для заполнения');
       return;
     }
@@ -43,6 +61,7 @@ export default function AdminPanel() {
     formData.append("price", newProduct.price);
     formData.append("description", newProduct.description);
     formData.append("stock", newProduct.stock);
+    formData.append("categoryId", newProduct.categoryId);
     if (newProductImage) {
       formData.append("image", newProductImage);
     }
@@ -53,7 +72,7 @@ export default function AdminPanel() {
           "Content-Type": "multipart/form-data",
         },
       });
-      setNewProduct({ name: "", price: "", description: "", stock: "" });
+      setNewProduct({ name: "", price: "", description: "", stock: "", categoryId: "" });
       setNewProductImage(null);
       fetchProducts();
     } catch (err) {
@@ -73,7 +92,7 @@ export default function AdminPanel() {
 
   // Изменение продукта
   async function handleEditProduct() {
-    if (!editProduct || !editProduct.name || !editProduct.price || !editProduct.description || editProduct.stock === undefined) {
+    if (!editProduct || !editProduct.name || !editProduct.price || !editProduct.description || editProduct.stock === undefined || !editProduct.categoryId) {
       setError('Все поля обязательны для заполнения');
       return;
     }
@@ -83,6 +102,7 @@ export default function AdminPanel() {
     formData.append("price", editProduct.price.toString());
     formData.append("description", editProduct.description);
     formData.append("stock", editProduct.stock.toString());
+    formData.append("categoryId", editProduct.categoryId);
     if (editProductImage) {
       formData.append("image", editProductImage);
     }
@@ -101,11 +121,58 @@ export default function AdminPanel() {
     }
   }
 
+  async function handleAddCategory() {
+    if (!newCategory.trim()) return;
+    try {
+      await api.post("/categories", { name: newCategory });
+      setNewCategory("");
+      fetchCategories();
+    } catch (err) {
+      setError("Ошибка добавления категории");
+    }
+  }
+
+  async function handleDeleteCategory(id: string) {
+    try {
+      await api.delete(`/categories/${id}`);
+      fetchCategories();
+    } catch (err) {
+      setError("Ошибка удаления категории");
+    }
+  }
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4">Админ Панель</h1>
 
       {error && <p className="text-red-500">{error}</p>}
+
+      {/* Раздел управления категориями */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">Категории</h2>
+        <div className="flex mb-2">
+          <input
+            type="text"
+            placeholder="Новая категория"
+            value={newCategory}
+            onChange={e => setNewCategory(e.target.value)}
+            className="border p-2 mr-2"
+          />
+          <button className="bg-green-500 text-white px-4 py-2" onClick={handleAddCategory}>
+            Добавить
+          </button>
+        </div>
+        <ul>
+          {categories.map(cat => (
+            <li key={cat.id} className="flex items-center mb-1">
+              <span className="mr-2">{cat.name}</span>
+              <button className="bg-red-500 text-white px-2 py-1 text-xs" onClick={() => handleDeleteCategory(cat.id)}>
+                Удалить
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       {/* Форма добавления */}
       <div className="mb-6">
@@ -146,6 +213,17 @@ export default function AdminPanel() {
           }
           className="border p-2 mr-2"
         />
+        <select
+          value={newProduct.categoryId}
+          onChange={e => setNewProduct({ ...newProduct, categoryId: e.target.value })}
+          className="border p-2 mr-2"
+          required
+        >
+          <option value="">Выберите категорию</option>
+          {categories.map(cat => (
+            <option key={cat.id} value={cat.id}>{cat.name}</option>
+          ))}
+        </select>
         <input
           type="file"
           accept="image/*"
@@ -227,6 +305,17 @@ export default function AdminPanel() {
             }
             className="border p-2 mr-2"
           />
+          <select
+            value={editProduct.categoryId || ""}
+            onChange={e => setEditProduct({ ...editProduct, categoryId: e.target.value })}
+            className="border p-2 mr-2"
+            required
+          >
+            <option value="">Выберите категорию</option>
+            {categories.map(cat => (
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
+            ))}
+          </select>
           <input
             type="file"
             accept="image/*"

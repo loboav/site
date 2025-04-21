@@ -18,6 +18,7 @@ export class ProductService {
         ...dto,
         price: parseFloat(dto.price.toString()),
         stock: parseInt(dto.stock.toString(), 10) || 0, // Устанавливаем значение по умолчанию
+        categoryId: dto.categoryId, // обязательно
       };
       return await this.prisma.product.create({ data });
     } catch (error) {
@@ -49,6 +50,7 @@ export class ProductService {
         ...dto,
         price: dto.price ? parseFloat(dto.price.toString()) : undefined,
         stock: dto.stock ? parseInt(dto.stock.toString(), 10) : undefined,
+        categoryId: dto.categoryId,
       };
       this.logger.log('Updating product with data:', data);
       return await this.prisma.product.update({ where: { id }, data });

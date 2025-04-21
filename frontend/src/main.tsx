@@ -26,6 +26,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/admin" element={<AdminPanel />} /> {/* Добавляем маршрут */}
             <Route path="/promo1" element={<PromoPage />} /> {/* Добавляем маршрут */}
             <Route path="/product/:id" element={<ProductDetails />} /> {/* Добавляем маршрут для ProductDetails */}
+            <Route path="/category/:categoryId" element={<Home />} /> {/* Добавляем маршрут для категории */}
           </Routes>
         </main>
         <Footer /> {/* Подвал */}

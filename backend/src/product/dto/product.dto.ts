@@ -20,6 +20,10 @@ export class CreateProductDto {
   @IsString()
   @IsOptional()
   image?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  categoryId: string;
 }
 
 export class UpdateProductDto {
@@ -44,4 +48,8 @@ export class UpdateProductDto {
   @IsString()
   @IsOptional()
   image?: string;
+
+  @IsString()
+  @IsOptional()
+  categoryId?: string;
 }
