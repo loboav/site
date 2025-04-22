@@ -72,7 +72,7 @@ export default function ProductDetails() {
           </div>
           <button
             onClick={handleAddToCart}
-            className="bg-green-500 text-white px-4 py-2 rounded"
+            className="bg-black text-white px-4 py-2 rounded"
           >
             Добавить в корзину
           </button>

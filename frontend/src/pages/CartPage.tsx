@@ -96,7 +96,7 @@ export default function CartPage() {
                       onClick={() =>
                         updateQuantity(item.id, item.quantity - 1)
                       }
-                      className="px-2 py-1 bg-red-500 text-white rounded"
+                      className="px-2 py-1 bg-black text-white rounded"
                     >
                       -
                     </button>
@@ -105,7 +105,7 @@ export default function CartPage() {
                       onClick={() =>
                         updateQuantity(item.id, item.quantity + 1)
                       }
-                      className="px-2 py-1 bg-green-500 text-white rounded"
+                      className="px-2 py-1 bg-black text-white rounded"
                     >
                       +
                     </button>

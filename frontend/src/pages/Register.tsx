@@ -60,7 +60,7 @@ export default function Register() {
             className="w-full p-2 border rounded text-black" // Добавлен класс text-black
             required
           />
-          <button type="submit" className="w-full bg-green-500 text-white p-2 rounded">
+          <button type="submit" className="w-full bg-black text-white p-2 rounded">
             Зарегистрироваться
           </button>
         </form>

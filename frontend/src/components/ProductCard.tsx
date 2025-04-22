@@ -80,7 +80,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <button
           onClick={handleAddToCart}
           disabled={isAdding}
-          className="block bg-green-500 text-white text-center py-2 mt-3 rounded w-full transition-transform duration-200 hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+          className="block bg-black text-white text-center py-2 mt-3 rounded w-full transition-transform duration-200 hover:bg-gray-800 active:scale-95 flex items-center justify-center gap-2"
         >
           <FaShoppingCart /> {isAdding ? "Добавление..." : "Купить"}
         </button>
@@ -107,7 +107,7 @@ export default function ProductCard({ product }: { product: Product }) {
             <div className="mt-4">
               <button
                 onClick={handleAddToCart}
-                className="bg-green-500 text-white px-4 py-2 rounded transition-transform duration-200 hover:scale-105 active:scale-95 flex items-center gap-2"
+                className="bg-black text-white px-4 py-2 rounded transition-transform duration-200 hover:bg-gray-800 active:scale-95 flex items-center gap-2"
               >
                 <FaShoppingCart /> Добавить в корзину
               </button>

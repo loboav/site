@@ -46,7 +46,7 @@ export default function Header() {
           )}
           {role ? (
             <button
-              className="mr-4 bg-red-500 text-white px-4 py-2 rounded font-semibold hover:bg-red-600 transition-colors"
+              className="mr-4 bg-black text-white px-4 py-2 rounded font-semibold hover:bg-gray-800 transition-colors"
               onClick={() => {
                 localStorage.clear();
                 window.location.reload();
@@ -57,13 +57,13 @@ export default function Header() {
           ) : (
             <>
               <button 
-                className="mr-4 bg-yellow-400 text-black px-4 py-2 rounded font-semibold hover:bg-yellow-500 transition-colors" 
+                className="mr-4 bg-black text-white px-4 py-2 rounded font-semibold hover:bg-gray-800 transition-colors" 
                 onClick={() => navigate("/login")}
               >
                 Войти
               </button>
               <button 
-                className="bg-yellow-400 text-black px-4 py-2 rounded font-semibold border border-yellow-400 hover:bg-yellow-500 hover:text-black transition-colors" 
+                className="bg-black text-white px-4 py-2 rounded font-semibold border border-black hover:bg-gray-800 hover:text-white transition-colors" 
                 onClick={() => navigate("/register")}
               >
                 Зарегистрироваться
